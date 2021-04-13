@@ -1,0 +1,29 @@
+import json
+import random
+
+
+class MocapLabels:
+    def __init__(self, mocap_labels_path):
+        self.mocap_labels_path = mocap_labels_path
+        self.mocap_labels = self.load(mocap_labels_path)
+
+    def load(self, fname):
+        with open(fname, 'r') as f:
+            return json.load(f)
+
+    def get_motion_ids(self, label):
+        ret = []
+        for k, v in self.mocap_labels.items():
+            if v['label'] == label:
+                ret.append(k)
+        return ret
+
+    def get_motion_id(self, label, seed=0):
+        random.seed(seed)
+        ids = self.get_motion_ids(label)
+        return random.choice(ids)
+
+
+if __name__ == '__main__':
+    ml = MocapLabels('utils/mocap_labels.json')
+    print(ml.get_motion_id('walk'))

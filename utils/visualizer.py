@@ -95,7 +95,8 @@ class Visualizer:
                     )
                     
         # ffmpeg: jpg to mp4
-        cmd = f'ffmpeg -y -framerate 16 -i {self.tmp_dir}/%05d.{self.img_type} -vcodec libx264 -pix_fmt yuv420p -r 16 {output}'
+        # cmd = f'ffmpeg -y -framerate 16 -i {self.tmp_dir}/%05d.{self.img_type} -vcodec libx264 -pix_fmt yuv420p -r 16 {output}'
+        cmd = f'ffmpeg -y -framerate 16 -i {self.tmp_dir}/%05d.{self.img_type} -vcodec libx264 -pix_fmt yuv420p -r 16 {output} -loglevel quiet'
         subprocess.run(cmd, shell=True)
                     
         # delete tmp

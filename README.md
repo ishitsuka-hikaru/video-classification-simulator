@@ -19,7 +19,7 @@ Clone [3D-ResNets-PyTorch for MakeHuman][3d-resnets-pytorch-makehuman] repositor
     
 Each module installation and usage refere to its README.md.
 
-Edit line-1, line-2 in run_sim.sh:
+Edit line-2, line-3 in run_sim.sh:
 
     run_sim.sh
     1  #!/bin/bash
@@ -27,8 +27,15 @@ Edit line-1, line-2 in run_sim.sh:
     3  PATH_MOGEN=<mogen repository>
     4  ...
 
+Download 3D-ResNets model from [here][makehuman-100k-31] (only AIST internal).
+
+Make directory and move to the model:
+
+    $ mkdir -p data/models && mv <MakeHuman-100k-31.pth> data/models    
+
 [mogen]: https://github.com/ishitsuka-hikaru/mogen
 [3d-resnets-pytorch-makehuman]: https://github.com/ishitsuka-hikaru/3D-ResNets-PyTorch
+[makehuman-100k-31]: https://aistmail-my.sharepoint.com/:u:/g/personal/ishitsuka_hikaru_aist_go_jp/EQfx3gQlaVREpqPcj0b_DyMBouq0d-57N6QKxQyzI4sBkQ?e=9PPLUE
 
 
 # Usage
@@ -50,6 +57,12 @@ Run simulation:
     
 where "f00" is MakeHuman model (female 00), "walk" is ground-truth video label, "1" is camera angle (camera 1).
 
+Result is here by default:
 
+    $ ls data/mp4/
+    f00-107_03-loc3.0_-3.0_3.0-rot60_0_45-end102_walk.mp4
+    $ ls data/results/
+    
+    
 # Reference
 - <https://github.com/kenshohara/3D-ResNets-PyTorch>

@@ -6,6 +6,13 @@ Video classification simulator by using [3D-ResNets-PyTorch][3d-resnets-pytorch]
 [3d-resnets-pytorch]: https://github.com/kenshohara/3D-ResNets-PyTorch
 
 
+## Requirements
+- Python 3.x
+- PyTorch 1.x
+- Blender 2.79b
+- FFmpeg
+
+
 ## Installation
 On Ubuntu 18.04
 
@@ -27,7 +34,8 @@ Edit line-2, line-3 in run_sim.sh:
     3  PATH_MOGEN=<mogen repository>
     4  ...
 
-Download 3D-ResNets model from [here][makehuman-100k-31] (only AIST internal).
+Download pre-train model from [here][makehuman-100k-31] (only AIST internal).  
+This model is trained on Kinetics-700, and fine-tuned by MakeHuman-100k dataset.
 
 Make directory and move to the model:
 
@@ -62,6 +70,7 @@ Result is here by default:
     $ ls data/mp4/
     f00-107_03-loc3.0_-3.0_3.0-rot60_0_45-end102_walk.mp4
     $ ls data/results/
+    opts.json  test_no_average.json
     
     
 # Reference

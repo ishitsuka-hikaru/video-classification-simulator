@@ -54,15 +54,10 @@ class Visualizer:
             video_id = k
             video_path = vals['video_path']
             label = vals['annotations']['label']
-            # for _, v in vals.items():
-            #     video_path = v['video_path']
-            #     label = v['annotations']['label']
                 
         output = os.path.join(self.output_path, f'{video_id}_{label}.mp4')
         result = self.result()
         preds = result[video_id]
-        # mid = vid.split('-')[1]
-        # video_path = os.path.join(self._videos, img_type, mid, vid)
         assert os.path.exists(video_path), f'video_path not found: {video_path}'
         
         videos = glob.glob(os.path.join(video_path, f'*.{self.img_type}'))
@@ -95,7 +90,6 @@ class Visualizer:
                     )
                     
         # ffmpeg: jpg to mp4
-        # cmd = f'ffmpeg -y -framerate 16 -i {self.tmp_dir}/%05d.{self.img_type} -vcodec libx264 -pix_fmt yuv420p -r 16 {output}'
         cmd = f'ffmpeg -y -framerate 16 -i {self.tmp_dir}/%05d.{self.img_type} -vcodec libx264 -pix_fmt yuv420p -r 16 {output} -loglevel quiet'
         subprocess.run(cmd, shell=True)
                     

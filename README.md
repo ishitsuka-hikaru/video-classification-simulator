@@ -11,6 +11,7 @@ Video classification simulator by using [3D-ResNets-PyTorch][3d-resnets-pytorch]
 - PyTorch 1.x
 - Blender 2.79b
 - FFmpeg
+- GNU Bash 4.x
 
 
 ## Installation

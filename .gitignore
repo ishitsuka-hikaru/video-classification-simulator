@@ -131,4 +131,5 @@ dmypy.json
 # add
 *~
 /.tmp/
+/.trash/
 /data/

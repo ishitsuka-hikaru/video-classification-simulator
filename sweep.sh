@@ -19,7 +19,7 @@ Usage: $(basename "$0") [OPTION]...
     --lat_max	  float	  	Maximum latitude (degrees)
     --lat_step	  float	  	Latitude step (degrees)
     -s, --seed 	  int	  	Random seed for the label selection	  
-    -q, --quiet		  	Quiet
+    -v, --verbose		Show blender stdout/stderr
     -h, --help 		  	Help
 
 EOM
@@ -40,10 +40,12 @@ function set_default() {
     lat_max=90
     lat_step=1
     seed=0
-    quiet=""
+    quiet=">/dev/null 2>&1"
 }
 
 function echo_params() {
+    [ -z "$quiet" ] && verbose=true || verbose=false
+    
     printf "%s parameters %s\n" "-------------" "-------------"
     printf "           model: %s\n" $mhxid
     printf "           label: %s\n" $bvhid
@@ -51,12 +53,12 @@ function echo_params() {
     printf " longitude range: [%.1f, %.1f, %.1f]\n" $lon_min $lon_max $lon_step
     printf "  latitude range: [%.1f, %.1f, %.1f]\n" $lat_min $lat_max $lat_step
     printf "     random seed: %d\n" $seed
-    #printf "           quiet: $s" [[ -n $quiet ]] && echo y || echo n
+    printf "         verbose: %s\n" $verbose
     printf "%s\n" "--------------------------------------"
 }
 
 
-OPTS=`getopt -o m:l:s:qh --long model:,label:,r_min:,r_max:,r_step:,lon_min:,lon_max:,lon_step:,lat_min:,lat_max:,lat_step:,seed:,quiet,help -n 'parse-options' -- "$@"`
+OPTS=`getopt -o m:l:s:vh --long model:,label:,r_min:,r_max:,r_step:,lon_min:,lon_max:,lon_step:,lat_min:,lat_max:,lat_step:,seed:,verbose,help -n 'parse-options' -- "$@"`
 
 if [ $? != 0 ]; then
     usage
@@ -93,8 +95,8 @@ while true; do
 	    lat_step=$2; shift; shift ;;
 	-s | --seed)
 	    seed=$2; shift; shift ;;
-	-q | --quiet)
-	    quiet=">/dev/null 2>&1"; shift ;;
+	-v | --verbose)
+	    unset quiet; shift ;;
 	-h | --help)
 	    usage; shift ;;
 	--)

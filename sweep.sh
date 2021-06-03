@@ -4,7 +4,7 @@ PATH_PRETRAIN=pretrain/MakeHuman-100k-31.pth
 PATH_MOGEN=../mogen
 PATH_MOCAP_LABELS=utils/mocap_labels.json
 PATH_CLASS_LABELS=$PATH_3D_RESNETS/util_scripts/makehuman-31.json
-DEBUG_MODE=true
+DEBUG_MODE=false
 
 function usage() {
     cat << EOM

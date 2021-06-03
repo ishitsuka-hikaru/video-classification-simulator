@@ -17,6 +17,7 @@ def get_opts():
     p.add_argument('--radius', type=float)
     p.add_argument('--longitude', type=float)
     p.add_argument('--latitude', type=float)
+    p.add_argument('--camera_constraint', type=str, default='none')
     p.add_argument('--id', type=int)
     p.add_argument('--root', type=str, default='data')
     p.add_argument('--video_type', type=str, default='makehuman_videos')
@@ -29,7 +30,6 @@ if __name__ == '__main__':
     r = opt.radius
     phi = np.radians(opt.longitude)
     theta = np.radians(opt.latitude)
-    id = opt.id
 
     if not os.path.exists(opt.results):
         os.makedirs(opt.results)
@@ -43,18 +43,27 @@ if __name__ == '__main__':
     y = r * np.sin(theta) * np.sin(phi)
     z = r * np.cos(theta)
     loc = x, y, z
+    #rot = 90-opt.latitude, 0, opt.longitude+90
     rot = opt.latitude, 0, opt.longitude+90
     
     h.set_camera_location(loc)
     h.set_camera_rotation(rot)
 
+    if opt.camera_constraint == 'track_to':
+        h.track_to()
+    elif opt.camera_constraint == 'copy_location':
+        h.copy_location()
+    elif opt.camera_constraint == 'track_and_copy':
+        h.track_to()
+        h.copy_location()
+
     model_name = os.path.basename(opt.model_path)[:-5]
     class_name = os.path.basename(opt.motion_path)[:-4]
-    loc_name = f'{r:.0f}_{opt.longitude:.0f}_{opt.latitude:.0f}'
+    loc_name = f'{r:.1f}_{opt.longitude:.0f}_{opt.latitude:.0f}'
     rot_name = '{:.0f}_{:.0f}_{:.0f}'.format(*rot)
     frame_end = h.get_frame_end()
     
-    video_name = f'{id:05d}-'
+    video_name = f'{opt.id:05d}-'
     video_name += f'{model_name}-'
     video_name += f'{class_name}-'
     video_name += f'loc{loc_name}-'

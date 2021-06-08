@@ -14,7 +14,7 @@ Usage: $(basename "$0") [OPTION]...
     -x float	  Specify camera location x
     -y float	  Specify camera location y
     -z float	  Specify camera location z
-    -a 		  Avarage per video (not frame)
+    -a 		  Average per video (not frame)
     -t 		  Tracking model parts
     -q 		  Quiet
     -h 		  Help

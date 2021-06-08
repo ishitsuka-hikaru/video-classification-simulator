@@ -23,6 +23,7 @@ Usage: $(basename "$0") [OPTION]...
     --lat_max	  		float	Maximum latitude (degrees), default 90
     --lat_step	  		float	Latitude step (degrees), default 1
     --lat_fixed			float	Fixed latitude (degrees)
+    --floor_texture_path	string	Add floor texture, default none
     --show_labels			Show all ground-truth class labels
     -d, --destination		string	Destination of result files, default ./data_<TIMESTAMP>
     -c, --camera_constraint	string	Active camera control (none|track_to|copy_location|track_and_copy), default none
@@ -57,6 +58,7 @@ function set_default() {
     seed=0
     retry=10
     is_sample=false
+    floor_texture_path=none
     quiet=">/dev/null 2>&1"
 }
 
@@ -64,18 +66,19 @@ function echo_params() {
     [ -z "$quiet" ] && verbose=true || verbose=false
     
     printf "%s parameters %s\n" "-------------" "-------------"
-    printf "   makehuman model: %s\n" $mhxid
-    printf "      motion label: %s\n" $bvhid
-    printf "         motion id: %s\n" $motion_id
-    printf "      radius range: [%.1f, %.1f, %.1f]\n" $r_min $r_max $r_step
-    printf "   longitude range: [%.1f, %.1f, %.1f]\n" $lon_min $lon_max $lon_step
-    printf "    latitude range: [%.1f, %.1f, %.1f]\n" $lat_min $lat_max $lat_step
-    printf " camera constraint: %s\n" $camera_constraint
-    printf "       random seed: %d\n" $seed
-    printf "             retry: %d\n" $retry
-    printf "       sample mode: %s\n" $is_sample
-    printf "           verbose: %s\n" $verbose
-    printf "         root path: %s\n" $root_path
+    printf "    makehuman model: %s\n" $mhxid
+    printf "       motion label: %s\n" $bvhid
+    printf "          motion id: %s\n" $motion_id
+    printf "       radius range: [%.1f, %.1f, %.1f]\n" $r_min $r_max $r_step
+    printf "    longitude range: [%.1f, %.1f, %.1f]\n" $lon_min $lon_max $lon_step
+    printf "     latitude range: [%.1f, %.1f, %.1f]\n" $lat_min $lat_max $lat_step
+    printf "  camera constraint: %s\n" $camera_constraint
+    printf "        random seed: %d\n" $seed
+    printf "              retry: %d\n" $retry
+    printf "        sample mode: %s\n" $is_sample
+    printf "            verbose: %s\n" $verbose
+    printf "          root path: %s\n" $root_path
+    printf " floor texture path: %s\n" $floor_texture_path
     printf "%s\n" "--------------------------------------"
 }
 
@@ -91,13 +94,14 @@ function write_params() {
 	"camera_constraint": "$camera_constraint",
 	"random_seed": $seed,
 	"retry": $retry,
-	"pretrain_model": "`basename $resume_path`"
+	"pretrain_model": "`basename $resume_path`",
+	"floor_texture_path": $floor_texture_path
 }
 EOM
 }
 
 
-OPTS=`getopt -o m:l:d:c:s:r:gvh --long model:,label:,r_min:,r_max:,r_step:,r_fixed:,lon_min:,lon_max:,lon_step:,lat_min:,lat_max:,lat_step:,lat_fixed:,show_labels,destination:,camera_constraint:,seed:,retry:,gen_sample,verbose,help -n 'parse-options' -- "$@"`
+OPTS=`getopt -o m:l:d:c:s:r:gvh --long model:,label:,r_min:,r_max:,r_step:,r_fixed:,lon_min:,lon_max:,lon_step:,lat_min:,lat_max:,lat_step:,lat_fixed:,floor_texture_path:,show_labels,destination:,camera_constraint:,seed:,retry:,gen_sample,verbose,help -n 'parse-options' -- "$@"`
 
 if [ $? != 0 ]; then
     usage
@@ -135,6 +139,8 @@ while true; do
 	    lat_step=$2; shift; shift ;;
 	--lat_fixed)
 	    lat_fixed=$2; shift; shift ;;
+	--floor_texture_path)
+	    floor_texture_path=$2; shift; shift ;;
 	--show_labels)
 	    show_labels=true; shift ;;
 	-d | --destination)
@@ -257,6 +263,7 @@ for lat in $(seq $lat_max -$lat_step $lat_min); do
 	    		 --radius $r \
 	    		 --longitude $lon \
 	    		 --latitude $lat \
+			 --floor_texture_path $floor_texture_path \
 			 --camera_constraint $camera_constraint \
 	    		 --id $i \
 	    		 --root $root_path $quiet
@@ -265,7 +272,7 @@ for lat in $(seq $lat_max -$lat_step $lat_min); do
 			dst=${mhxid}_${bvhid}_${motion_id}_${camera_constraint}.mp4
 			./utils/jpg2mp4.sh $root_path/$video_path/*/*/ $dst
 			printf "sample generation succeeded\n"
-			printf "\tfilepath: %s\n" `realpath $dst`
+			printf "filepath: %s\n" `realpath $dst`
 			break 3
 		    fi
 

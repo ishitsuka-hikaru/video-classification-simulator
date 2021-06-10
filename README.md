@@ -1,7 +1,7 @@
 # video-classification-simulator
 Video classification simulator by using [3D-ResNets-PyTorch][3d-resnets-pytorch].
 
-<img src="imgs/demo_sim.gif" width="640px" align="top"> <img src="imgs/demo_sim_result.gif" width="256px" align="top">
+<img src="imgs/demo_sim.gif" width="512px" align="top"> <img src="imgs/demo_sim_result.gif" width="128px" align="top">
 
 [3d-resnets-pytorch]: https://github.com/kenshohara/3D-ResNets-PyTorch
 

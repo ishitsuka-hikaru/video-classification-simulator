@@ -1,7 +1,7 @@
 # video-classification-simulator
 Video classification simulator by using [3D-ResNets-PyTorch][3d-resnets-pytorch].
 
-<img src="imgs/demo_sim.gif" width="500px"> <img src="imgs/demo_sim_result.gif" width="200px" align="top">
+<img src="imgs/demo_sim.gif" width="640px" align="top"> <img src="imgs/demo_sim_result.gif" width="256px" align="top">
 
 [3d-resnets-pytorch]: https://github.com/kenshohara/3D-ResNets-PyTorch
 
@@ -27,16 +27,17 @@ Clone [3D-ResNets-PyTorch for MakeHuman][3d-resnets-pytorch-makehuman] repositor
     
 Each module installation and usage refere to their README.md.
 
-Edit line-2, line-3 in run_sim.sh:
+Edit line-2, line-3 in `sim.sh`:
 
-    sim.sh
+    ./sim.sh
     1  #!/bin/bash
     2  PATH_3D_RESNETS=<3D-ResNets-PyTorch repository>
     3  PATH_MOGEN=<mogen repository>
     4  ...
 
-Download pre-train model from [here][makehuman-100k-pretrain] (AIST internal).  
-This model is trained on Kinetics-700, and fine-tuned by MakeHuman-100k dataset. If you need Makehuman-100k dataset, you can download it [here][makehuman-100k-dataset] (AIST internal).
+Download pre-train model from [here][makehuman-100k-pretrain] (AIST internal).
+This model is trained on Kinetics-700, and fine-tuned by MakeHuman-100k dataset.
+If you need MakeHuman-100k dataset, you can download it [here][makehuman-100k-dataset] (AIST internal).
 
 Make new directory and move to the model:
 
@@ -54,8 +55,8 @@ Make new directory and move to the model:
 Show help:
 
 ```
-$ ./run_sim.sh -h
-Usage: run_sim.sh [OPTION]...
+$ ./sim.sh -h
+Usage: sim.sh [OPTION]...
 
 	-m, --model              string   Specify model ID (f00|...|f04|m00|...|m04), default f00
 	-l, --label              string   Specify motion label (walk|run|jump|...), default walk
@@ -72,13 +73,13 @@ Usage: run_sim.sh [OPTION]...
 	-h, --help                        Help
 ```
 
-Run simulation:
+Run:
 
-    $ ./run_sim.sh -m f00 -l walk 
+    $ ./sim.sh -m f00 -l walk 
     
 where "f00" is MakeHuman model name (female-00), "walk" is ground-truth video label.
 
-Result is here by default:
+Simulation result is here:
 
     $ ls data/mp4/
     f00-107_03-loc3.0_-3.0_3.0-rot60_0_45-end102_walk.mp4
@@ -119,3 +120,5 @@ Usage: sweep.sh.tmp4 [OPTION]...
     
 # Reference
 - <https://github.com/kenshohara/3D-ResNets-PyTorch>
+- <http://www.makehumancommunity.org/>
+- <http://mocap.cs.cmu.edu/>

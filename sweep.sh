@@ -10,8 +10,8 @@ function usage() {
     cat << EOM
 Usage: $(basename "$0") [OPTION]...
 
-    -m, --model			string	Specify model ID (f00|...|f04|m00|...|m04)
-    -l, --label   		string	Specify motion label (walk|run|jump|...), see utils/mocap_labels.json
+    -m, --model			string	Specify model ID (f00|...|f04|m00|...|m04), default f00
+    -l, --label   		string	Specify motion label (walk|run|jump|...), default walk
     --r_min 	  		float	Minimum radius (meters), default 10
     --r_max 	  		float	Maximum radius (meters), default 10
     --r_step	  		float	Radius step (meters), default 1

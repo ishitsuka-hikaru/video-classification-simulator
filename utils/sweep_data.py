@@ -97,7 +97,7 @@ class SweepData:
 
             if self.fixed_axis == 'r':
                 lon = np.arange(self.lon_min, self.lon_max + self.lon_step, self.lon_step) - np.pi
-                lat = np.arange(self.lat_min, self.lat_max + self.lat_step, self.lat_step)
+                lat = np.arange(self.lat_max, self.lat_min - self.lat_step, -self.lat_step)
             elif self.fixed_axis == 'lat':
                 lon = np.arange(self.lon_min, self.lon_max + self.lon_step, self.lon_step) - np.pi
                 lat = np.arange(self.r_min, self.r_max + self.r_step, self.r_step)
@@ -114,7 +114,9 @@ class SweepData:
                 yticklabels = ['${:.0f}^{{\circ}}$'.format(_) for _ in yticks]
                 ax.set_yticklabels(yticklabels)
                 ax.invert_yaxis()
-            #ax.tick_params(axis='y', colors='white')
+
+            if np.nanmedian(hmap) < 0.3:
+                ax.tick_params(axis='y', colors='white')
 
             fig.colorbar(im, ax=ax, orientation='vertical', aspect=30, pad=0.1)
         elif projection == 'mollweide' or projection == 'hammer' or projection == 'rectilinear':
@@ -124,7 +126,7 @@ class SweepData:
 
             if self.fixed_axis == 'r':
                 lon = np.arange(self.lon_min, self.lon_max + self.lon_step, self.lon_step)
-                lat = np.arange(self.lat_min, self.lat_max + self.lat_step, self.lat_step)
+                lat = np.arange(self.lat_max, self.lat_min - self.lat_step, -self.lat_step)
             elif self.fixed_axis == 'lat':
                 lon = np.arange(self.lon_min, self.lon_max + self.lon_step, self.lon_step)
                 lat = np.arange(np.pi/2 - self.r_min/self.r_max*np.pi/2, -self.r_step/self.r_max*np.pi/2, -self.r_step/self.r_max*np.pi/2)

@@ -2,22 +2,25 @@
 PATH_3D_RESNETS=../3D-ResNets-PyTorch
 PATH_MOGEN=../mogen
 PATH_MOCAP_LABELS=utils/mocap_labels.json
+PATH_CLASS_LABELS=$PATH_3D_RESNETS/util_scripts/makehuman-31.json
 
 function usage() {
     cat <<EOM
 Usage: $(basename "$0") [OPTION]...
 
-    -m string	  Specify model ID (f00|...|f04|m00|...|m04)
-    -l string	  Specify motion label (walk|run|jump|...), see utils/mocap_labels.json
-    -s int	  Random seed for the label selection	  
-    -c int	  Specify camera angle (1|2|3|4)
-    -x float	  Specify camera location x
-    -y float	  Specify camera location y
-    -z float	  Specify camera location z
-    -a 		  Average per video (not frame)
-    -t 		  Tracking model parts
-    -q 		  Quiet
-    -h 		  Help
+    -m, --model   	     string   Specify model ID (f00|...|f04|m00|...|m04), default f00
+    -l, --label	  	     string   Specify motion label (walk|run|jump|...), default walk
+    --camera_angle	     int      Specify camera angle (1|2|3|4), default 1
+    --cam_x		     float    Specify camera location x, default 0
+    --cam_y		     float    Specify camera location y, default 0
+    --cam_z		     float    Specify camera location z, default 0
+    -a, --averaging	              Averaging per video, default false
+    -c, --camera_constraint  string   Active camera control (none|track_to|copy_location), default none
+    -s, --seed		     int      Random seed for the label selection, default 0
+    --floor_texture	     string   Add floor texture, default none
+    --show_labels	     	      Show all ground-truth class labels
+    -q 		  	     	      Quiet
+    -h				      Help
 
 EOM
 
@@ -29,62 +32,68 @@ function set_default() {
     bvhid=walk
     seed=0
     camid=1
-    camera_x=0
-    camera_y=0
-    camera_z=0
-    is_averaging=false
-    is_tracking=false
+    cam_x=0
+    cam_y=0
+    cam_z=0
+    #is_averaging=false
+    is_ave=false
+    #is_tracking=false
+    camera_constraint=none
+    show_labels=false
+    floor_texture=none
 }
+
+
+OPTS=`getopt -o m:l:ac:s:qh --long model:,label:,camera_angle:,cam_x:,cam_y:,cam_z:,averaging,camera_constraint:,seed:,floor_texture:,show_labels,quiet,help -n 'parse-options' -- "$@"`
+
+if [ $? != 0 ]; then
+    usage
+fi
+
+eval set -- "$OPTS"
 
 set_default
 
-while getopts ":m:l:s:c:x:y:z:atqh" OPT; do
-    case $OPT in
-	m)
-	    mhxid=$OPTARG
-	    ;;
-	l)
-	    bvhid=$OPTARG
-	    ;;
-	s)
-	    seed=$OPTARG
-	    ;;
-	c)
-	    camid=$OPTARG
-	    ;;
-	x)
-	    camera_x=$OPTARG
-	    ;;
-	y)
-	    camera_y=$OPTARG
-	    ;;
-	z)
-	    camera_z=$OPTARG
-	    ;;
-	a)
-	    is_averaging=true
-	    ;;
-	t)
-	    is_tracking=true
-	    ;;
-	q)
-	    #echo "start simulation! (quiet)"
-	    quiet=">/dev/null 2>&1"
-	    ;;
-	h)
-	    usage
-	    ;;
-	\?)
-	    usage
-	    ;;
-	:)
-	    usage
-	    ;;
+while true; do
+    case "$1" in
+	-m | --model)
+	    mhxid=$2; shift; shift ;;
+	-l | --label)
+	    bvhid=$2; shift; shift ;;
+	--camera_angle)
+	    camid=$2; shift; shift ;;
+	--cam_x)
+	    cam_x=$2; shift; shift ;;
+	--cam_y)
+	    cam_y=$2; shift; shift ;;
+	--cam_z)
+	    cam_z=$2; shift; shift ;;
+	-a | --averaging)
+	    is_ave=true; shift ;;
+	-c | --camera_constraint)
+	    camera_constraint=$2; shift; shift ;;
+	-s | --seed)
+	    seed=$2; shift; shift ;;
+	--floor_texture)
+	    floor_texture=$2; shift; shift ;;
+	--show_labels)
+	    show_labels=true; shift ;;
+	-q | --quiet)
+	    quiet=">/dev/null 2>&1"; shift ;;
+	-h | --help)
+	    usage; shift ;;
+	--)
+	    shift; break ;;
 	*)
-	    usage
-	    ;;
+	    break ;;
     esac
 done
+
+
+if "$show_labels"; then
+    cat $PATH_CLASS_LABELS
+    exit 1
+fi
 
 
 motion_label=`python3 utils/mocap_labels.py --label $bvhid --seed $seed`
@@ -99,9 +108,7 @@ camera=$camid
 root_path=data
 video_path=makehuman_videos/jpg
 annotation_path=makehuman.json
-#result_path=results
-#result_path=results/$mhxid/$motion_label/${camera_x}_${camera_y}_${camera_z}
-result_path=results/${mhxid}_${bvhid}_${camera_x}_${camera_y}_${camera_z}
+result_path=results/${mhxid}_${bvhid}_${cam_x}_${cam_y}_${cam_z}
 dataset=makehuman
 resume_path=models/MakeHuman-100k-31.pth
 n_classes=31
@@ -111,7 +118,7 @@ n_threads=`cat /proc/cpuinfo | grep processor | wc -l`
 output_topk=$n_classes
 inference_batch_size=1
 inference_subset=test
-inference_crop=nocrop  # (center | nocrop)
+inference_crop=nocrop  # (center|nocrop)
 
 
 # Init.
@@ -122,37 +129,24 @@ fi
 
 
 # Generate motion video
-if [ $camera_x -eq 0 ] && [ $camera_y -eq 0 ] && [ $camera_z -eq 0 ]; then
-    if "$is_tracking"; then
-	eval blender -noaudio -b -P $PATH_MOGEN/mogen.py -- \
-	     --model $model_path \
-	     --motion $motion_path \
-	     --camera $camera \
-	     --tracking $quiet
-    else
-	eval blender -noaudio -b -P $PATH_MOGEN/mogen.py -- \
-	     --model $model_path \
-	     --motion $motion_path \
-	     --camera $camera $quiet
-    fi
+if [ $cam_x -eq 0 ] && [ $cam_y -eq 0 ] && [ $cam_z -eq 0 ]; then
+    eval blender -noaudio -b -P $PATH_MOGEN/mogen.py -- \
+	 --model $model_path \
+	 --motion $motion_path \
+	 --camera $camera \
+	 --camera_constraint $camera_constraint \
+	 --floor_texture_path $floor_texture $quiet
 else
     # Set camera location
-    camera_loc="$camera_x $camera_y $camera_z"
+    camera_loc="$cam_x $cam_y $cam_z"
 
-    if "$is_tracking"; then
-	eval blender -noaudio -b -P $PATH_MOGEN/mogen.py -- \
-	     --model $model_path \
-	     --motion $motion_path \
-	     --camera $camera \
-	     --location $camera_loc \
-	     --tracking $quiet
-    else
-	eval blender -noaudio -b -P $PATH_MOGEN/mogen.py -- \
-	     --model $model_path \
-	     --motion $motion_path \
-	     --camera $camera \
-	     --location $camera_loc $quiet
-    fi
+    eval blender -noaudio -b -P $PATH_MOGEN/mogen.py -- \
+	 --model $model_path \
+	 --motion $motion_path \
+	 --camera $camera \
+	 --location $camera_loc \
+	 --camera_constraint $camera_constraint \
+	 --floor_texture_path $floor_texture $quiet
 fi
 
 
@@ -169,7 +163,7 @@ python3 $PATH_3D_RESNETS/util_scripts/makehuman_json.py \
 
 
 # Evaluation
-if "$is_averaging"; then
+if "$is_ave"; then
     eval python3 $PATH_3D_RESNETS/main.py \
 	 --root_path $root_path \
 	 --video_path $video_path \
@@ -212,7 +206,7 @@ fi
 
 
 # Visualize the result
-if ! "$is_averaging"; then
+if ! "$is_ave"; then
     python3 utils/visualizer.py \
 	    --root_path $root_path \
 	    --annotation_path $annotation_path \

@@ -25,18 +25,18 @@ Clone [3D-ResNets-PyTorch for MakeHuman][3d-resnets-pytorch-makehuman] repositor
 
     $ git clone https://github.com/ishitsuka-hikaru/3D-ResNets-PyTorch.git
     
-Each module installation and usage refere to its README.md.
+Each module installation and usage refere to their README.md.
 
 Edit line-2, line-3 in run_sim.sh:
 
-    run_sim.sh
+    sim.sh
     1  #!/bin/bash
     2  PATH_3D_RESNETS=<3D-ResNets-PyTorch repository>
     3  PATH_MOGEN=<mogen repository>
     4  ...
 
-Download pre-train model from [here][makehuman-100k-31] (AIST internal).  
-This model is trained on Kinetics-700, and fine-tuned by MakeHuman-100k dataset.
+Download pre-train model from [here][makehuman-100k-pretrain] (AIST internal).  
+This model is trained on Kinetics-700, and fine-tuned by MakeHuman-100k dataset. If you need Makehuman-100k dataset, you can download it [here][makehuman-100k-dataset] (AIST internal).
 
 Make new directory and move to the model:
 
@@ -44,7 +44,8 @@ Make new directory and move to the model:
 
 [mogen]: https://github.com/ishitsuka-hikaru/mogen
 [3d-resnets-pytorch-makehuman]: https://github.com/ishitsuka-hikaru/3D-ResNets-PyTorch
-[makehuman-100k-31]: https://aistmail-my.sharepoint.com/:u:/g/personal/ishitsuka_hikaru_aist_go_jp/EQfx3gQlaVREpqPcj0b_DyMBouq0d-57N6QKxQyzI4sBkQ?e=9PPLUE
+[makehuman-100k-pretrain]: https://aistmail-my.sharepoint.com/:u:/g/personal/ishitsuka_hikaru_aist_go_jp/EQfx3gQlaVREpqPcj0b_DyMBouq0d-57N6QKxQyzI4sBkQ?e=9PPLUE
+[makehuman-100k-dataset]: https://aistmail-my.sharepoint.com/:u:/g/personal/ishitsuka_hikaru_aist_go_jp/EaYl2B5yueFAgC2X_LS7Jm0B5lTU1ivjsvB2nAsFM-0khg?e=5gnpeQ
 
 
 # Usage
@@ -86,7 +87,7 @@ Result is here by default:
 
 
 ## Sweep mode
-Visualize 3D-ResNets score on a hemisphere (see [tutorial/sweep_data_analysis.ipynb](tutorial/sweep_data_analysis.ipynb)).
+Visualize 3D-ResNets score on a hemisphere (see [tutorial/sweep_data_analysis.ipynb][tutorial]).
 
 ```
 $ ./sweep.sh -h
@@ -111,7 +112,10 @@ Usage: sweep.sh.tmp4 [OPTION]...
     -v, --verbose                       Show blender stdout/stderr
     -g, --gen_sample                    Generate sample animation, not eval
     -h, --help                          Help
-```																				
+```
+
+[tutorial]: tutorial/sweep_data_analysis.ipynb
+
     
 # Reference
 - <https://github.com/kenshohara/3D-ResNets-PyTorch>

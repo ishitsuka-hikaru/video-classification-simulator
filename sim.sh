@@ -19,8 +19,8 @@ Usage: $(basename "$0") [OPTION]...
     -s, --seed		     int      Random seed for the label selection, default 0
     --floor_texture	     string   Add floor texture, default none
     --show_labels	     	      Show all ground-truth class labels
-    -q 		  	     	      Quiet
-    -h				      Help
+    -q, --quiet	  	     	      Quiet
+    -h, --help			      Help
 
 EOM
 

@@ -1,7 +1,8 @@
 # video-classification-simulator
 Video classification simulator by using [3D-ResNets-PyTorch][3d-resnets-pytorch].
 
-<img src="imgs/demo.gif" width="640px">
+<img src="imgs/demo_sim.gif" width="640px">
+<img src="imgs/demo_sim_result.gif" width="256px">
 
 [3d-resnets-pytorch]: https://github.com/kenshohara/3D-ResNets-PyTorch
 
@@ -56,23 +57,26 @@ Show help:
 $ ./run_sim.sh -h
 Usage: run_sim.sh [OPTION]...
 
-    -m string     Specify model ID (f00|...|f04|m00|...|m04)
-    -l string     Specify motion label (walk|run|jump|...), see utils/mocap_labels.json
-    -s int        Random seed for the label selection
-    -c int        Specify camera angle (1|2|3|4)
-    -x float      Specify camera location x
-    -y float      Specify camera location y
-    -z float      Specify camera location z
-    -a            Average per video (not frame)
-    -q            Quiet
-    -h            Help
+	-m, --model              string   Specify model ID (f00|...|f04|m00|...|m04), default f00
+	-l, --label              string   Specify motion label (walk|run|jump|...), default walk
+	--camera_angle           int      Specify camera angle (1|2|3|4), default 1
+	--cam_x                  float    Specify camera location x, default 0
+	--cam_y                  float    Specify camera location y, default 0
+	--cam_z                  float    Specify camera location z, default 0
+	-a, --averaging                   Averaging per video, default false
+	-c, --camera_constraint  string   Active camera control (none|track_to|copy_location), default none
+	-s, --seed               int      Random seed for the label selection, default 0
+	--floor_texture          string   Add floor texture, default none
+	--show_labels                     Show all ground-truth class labels
+	-q, --quiet                       Quiet
+	-h, --help                        Help
 ```
 
 Run simulation:
 
-    $ ./run_sim.sh -m f00 -l walk -c 1
+    $ ./run_sim.sh -m f00 -l walk 
     
-where "f00" is MakeHuman model name (female-00), "walk" is ground-truth video label, "1" is camera angle (camera 1).
+where "f00" is MakeHuman model name (female-00), "walk" is ground-truth video label.
 
 Result is here by default:
 

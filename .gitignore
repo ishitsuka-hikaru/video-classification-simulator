@@ -137,6 +137,6 @@ dmypy.json
 /dev/
 /results/
 /*.mp4
-/tutorial/data/
+/tutorials/data/
 /pretrain/
 sweep.sh.tmp*

@@ -2,7 +2,6 @@
 FPS=30
 SRC=${1%/}
 FORMAT=image_%05d.jpg
-#DST=`basename $SRCDIR`.mp4
 DST=$2
 LOGLEVEL=quiet
 

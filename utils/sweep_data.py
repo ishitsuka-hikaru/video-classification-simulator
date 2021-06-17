@@ -189,6 +189,7 @@ class SweepData:
             if not os.path.exists(d):
                 os.makedirs(d)
             fig.savefig(save_path)
+            plt.close()
 
     def step_phi(self):
         return self._step_phi

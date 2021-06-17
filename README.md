@@ -1,7 +1,7 @@
 # video-classification-simulator
 Video classification simulator by using [3D-ResNets-PyTorch][3d-resnets-pytorch].
 
-<img src="imgs/demo_sim.gif" width="512px" align="top"> <img src="imgs/demo_sim_result.gif" width="128px" align="top">
+<img src="imgs/demo_sim.gif" width="512px" align="top"> <img src="imgs/demo_sim_result.gif" width="192px" align="top">
 
 [3d-resnets-pytorch]: https://github.com/kenshohara/3D-ResNets-PyTorch
 
@@ -88,7 +88,7 @@ Simulation result is here:
 
 
 ## Sweep mode
-Visualize 3D-ResNets score on a hemisphere (see [tutorial/sweep_data_analysis.ipynb][tutorial]).
+Visualize 3D-ResNets score on a hemisphere (see [tutorials/sweep_data_analysis.ipynb][tutorial]).
 
 ```
 $ ./sweep.sh -h
@@ -115,7 +115,7 @@ Usage: sweep.sh.tmp4 [OPTION]...
     -h, --help                          Help
 ```
 
-[tutorial]: tutorial/sweep_data_analysis.ipynb
+[tutorial]: tutorials/sweep_data_analysis.ipynb
 
     
 # Reference

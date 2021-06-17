@@ -88,7 +88,7 @@ Simulation result is here:
 
 
 ## Sweep mode
-Visualize 3D-ResNets score on a hemisphere (see [tutorials/sweep_data_analysis.ipynb][tutorial]).
+Visualize 3D-ResNets score on a hemisphere (see [tutorials/sweep_data.ipynb][tutorials]).
 
 ```
 $ ./sweep.sh -h
@@ -115,7 +115,7 @@ Usage: sweep.sh.tmp4 [OPTION]...
     -h, --help                          Help
 ```
 
-[tutorial]: tutorials/sweep_data_analysis.ipynb
+[tutorials]: tutorials/sweep_data.ipynb
 
     
 # Reference

@@ -19,6 +19,7 @@ Usage: $(basename "$0") [OPTION]...
     -s, --seed		     int      Random seed for the label selection, default 0
     --floor_texture	     string   Add floor texture, default none
     --show_labels	     	      Show all ground-truth class labels
+    --no_recognition		      Stop at video generation
     -q, --quiet	  	     	      Quiet
     -h, --help			      Help
 
@@ -40,11 +41,12 @@ function set_default() {
     #is_tracking=false
     camera_constraint=none
     show_labels=false
+    no_recognition=false
     floor_texture=none
 }
 
 
-OPTS=`getopt -o m:l:ac:s:qh --long model:,label:,camera_angle:,cam_x:,cam_y:,cam_z:,averaging,camera_constraint:,seed:,floor_texture:,show_labels,quiet,help -n 'parse-options' -- "$@"`
+OPTS=`getopt -o m:l:ac:s:qh --long model:,label:,camera_angle:,cam_x:,cam_y:,cam_z:,averaging,camera_constraint:,seed:,floor_texture:,show_labels,no_recognition,quiet,help -n 'parse-options' -- "$@"`
 
 if [ $? != 0 ]; then
     usage
@@ -78,6 +80,8 @@ while true; do
 	    floor_texture=$2; shift; shift ;;
 	--show_labels)
 	    show_labels=true; shift ;;
+	--no_recognition)
+	    no_recognition=true; shift ;;
 	-q | --quiet)
 	    quiet=">/dev/null 2>&1"; shift ;;
 	-h | --help)
@@ -149,6 +153,9 @@ else
 	 --floor_texture_path $floor_texture $quiet
 fi
 
+if "$no_recognition"; then
+    exit 1
+fi
 
 # Make annotation file
 python3 $PATH_3D_RESNETS/util_scripts/makehuman_json.py \

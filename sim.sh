@@ -14,10 +14,15 @@ Usage: $(basename "$0") [OPTION]...
     --cam_x		     float    Specify camera location x, default 0
     --cam_y		     float    Specify camera location y, default 0
     --cam_z		     float    Specify camera location z, default 0
+    --cam_rx		     float    Specify camera rotation x, default 0
+    --cam_ry		     float    Specify camera rotation y, default 0
+    --cam_rz		     float    Specify camera rotation z, default 0
     -a, --averaging	              Averaging per video, default false
     -c, --camera_constraint  string   Active camera control (none|track_to|copy_location), default none
     -s, --seed		     int      Random seed for the label selection, default 0
+    --tmp_dir		     string   Rendering image location, default jpg
     --floor_texture	     string   Add floor texture, default none
+    --checker_floor	     	      Add floor texture
     --show_labels	     	      Show all ground-truth class labels
     --no_recognition		      Stop at video generation
     -q, --quiet	  	     	      Quiet
@@ -36,17 +41,22 @@ function set_default() {
     cam_x=0
     cam_y=0
     cam_z=0
+    cam_rx=45
+    cam_ry=0
+    cam_rz=0
     #is_averaging=false
     is_ave=false
     #is_tracking=false
     camera_constraint=none
     show_labels=false
     no_recognition=false
+    tmp_dir=jpg
     floor_texture=none
+    checker_floor=
 }
 
 
-OPTS=`getopt -o m:l:ac:s:qh --long model:,label:,camera_angle:,cam_x:,cam_y:,cam_z:,averaging,camera_constraint:,seed:,floor_texture:,show_labels,no_recognition,quiet,help -n 'parse-options' -- "$@"`
+OPTS=`getopt -o m:l:ac:s:qh --long model:,label:,camera_angle:,cam_x:,cam_y:,cam_z:,cam_rx:,cam_ry:,cam_rz:,averaging,camera_constraint:,seed:,tmp_dir:,floor_texture:,checker_floor:,show_labels,no_recognition,quiet,help -n 'parse-options' -- "$@"`
 
 if [ $? != 0 ]; then
     usage
@@ -70,14 +80,24 @@ while true; do
 	    cam_y=$2; shift; shift ;;
 	--cam_z)
 	    cam_z=$2; shift; shift ;;
+	--cam_rx)
+	    cam_rx=$2; shift; shift ;;
+	--cam_ry)
+	    cam_ry=$2; shift; shift ;;
+	--cam_rz)
+	    cam_rz=$2; shift; shift ;;
 	-a | --averaging)
 	    is_ave=true; shift ;;
 	-c | --camera_constraint)
 	    camera_constraint=$2; shift; shift ;;
 	-s | --seed)
 	    seed=$2; shift; shift ;;
+	--tmp_dir)
+	    tmp_dir=$2; shift; shift ;;
 	--floor_texture)
 	    floor_texture=$2; shift; shift ;;
+	--checker_floor)
+	    checker_floor=--checker_floor; shift ;;
 	--show_labels)
 	    show_labels=true; shift ;;
 	--no_recognition)
@@ -133,24 +153,31 @@ fi
 
 
 # Generate motion video
-if [ $cam_x -eq 0 ] && [ $cam_y -eq 0 ] && [ $cam_z -eq 0 ]; then
+# if [ $cam_x -eq 0 ] && [ $cam_y -eq 0 ] && [ $cam_z -eq 0 ]; then
+if [ `echo "$cam_x == 0" | bc` == 1 ] && [ `echo "$cam_y == 0" | bc` == 1 ] && [ `echo "$cam_z == 0" | bc` == 1 ]; then
     eval blender -noaudio -b -P $PATH_MOGEN/mogen.py -- \
 	 --model $model_path \
 	 --motion $motion_path \
 	 --camera $camera \
 	 --camera_constraint $camera_constraint \
-	 --floor_texture_path $floor_texture $quiet
+	 --image_type $tmp_dir \
+	 --floor_texture_path $floor_texture \
+	 $checker_floor $quiet
 else
-    # Set camera location
+    # Set camera location and rotation
     camera_loc="$cam_x $cam_y $cam_z"
+    camera_rot="$cam_rx $cam_ry $cam_rz"
 
     eval blender -noaudio -b -P $PATH_MOGEN/mogen.py -- \
 	 --model $model_path \
 	 --motion $motion_path \
 	 --camera $camera \
 	 --location $camera_loc \
+	 --rotation $camera_rot \
 	 --camera_constraint $camera_constraint \
-	 --floor_texture_path $floor_texture $quiet
+	 --image_type $tmp_dir \
+	 --floor_texture_path $floor_texture \
+	 $checker_floor $quiet
 fi
 
 if "$no_recognition"; then

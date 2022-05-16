@@ -1,8 +1,8 @@
 #!/bin/bash
 INPUT=$1
 FPS=10
-WIDTH=640
-LOGLEVEL=quiet  # (quiet|error|info|debug)
+WIDTH=256
+LOGLEVEL=quiet  # quiet | error | info | debug
 
 if [ -z "$2" ]; then
     OUTPUT=${INPUT:0:-4}.gif

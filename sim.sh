@@ -145,10 +145,12 @@ inference_subset=test
 inference_crop=nocrop  # (center|nocrop)
 
 
-# Init.
-mkdir -p $root_path/$result_path
-if [ -e $root_path/$video_path ]; then
-    rm -r $root_path/$video_path
+# Init
+if ! "$no_recognition"; then
+    mkdir -p $root_path/$result_path
+    if [ -e $root_path/$video_path ]; then
+	rm -r $root_path/$video_path
+    fi
 fi
 
 

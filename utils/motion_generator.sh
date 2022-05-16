@@ -2,28 +2,41 @@
 #------------------------------------------------------------------------------#
 # setting                                                                      #
 #------------------------------------------------------------------------------#
-NUM=10  # number of motions
-DSTDIR=data/output_motions  # destination of motions
+NUM=1000  # number of motions
+DSTDIR=data/fg_finetune_20220513  # destination of motions
 MODELS=(f00 f01 f02 f03 f04 f05 f06 f07 f08 m00 m01 m02 m03 m05 m06 m07 m08)
+# MODELS=(f00)
+# MOTIONS=(
+#     "run" "jump" "clean" "walk" "dance" "motorcycle" "carry suitcases"
+#     "stand" "pick up" "march" "drink" "kick" "swing" "throw" "dribble"
+#     "push" "duck" "climb" "chicken" "comfort" "wait" "eat" "reach" "stretch"
+#     "cartwheel" "hop turn" "prairie dog" "swim" "monkey" "wave" "pull"
+# )
 MOTIONS=(
-    "run" "jump" "clean" "walk" "dance" "motorcycle" "carry suitcases"
-    "stand" "pick up" "march" "drink" "kick" "swing" "throw" "dribble"
-    "push" "duck" "climb" "chicken" "comfort" "wait" "eat" "reach" "stretch"
-    "cartwheel" "hop turn" "prairie dog" "swim" "monkey" "wave" "pull"
+    "run" "jump" "clean" "walk" "dance" "motorcycle"
+    "stand" "march" "drink" "kick" "swing" "throw" "dribble"
+    "duck" "climb" "chicken" "comfort" "wait" "eat" "reach" "stretch"
+    "cartwheel" "swim" "monkey" "wave"
 )
-X_RANGE=($(seq 10 70))  # -> [1.0, 7.0], unit: meters
-Y_RANGE=($(seq -10 10))
-Z_RANGE=($(seq 15 25))
-RX_RANGE=($(seq 425 475))  # -> [37.5, 42.5], unit: degrees
-RY_RANGE=($(seq -5 5))
-RZ_RANGE=($(seq 875 925))
-# OPT="--checker_floor"  # comment out if not needed
+# MOTIONS=(walk)
+X_RANGE=($(seq -10 10))    # 0
+Y_RANGE=($(seq -60 -20))   # -40
+Z_RANGE=($(seq 15 25))     # 20
+RX_RANGE=($(seq 540 560))  # 550
+RY_RANGE=($(seq -5 5))     # 0
+RZ_RANGE=($(seq -10 10))   # 0
+RANDOM=0  # random seed
+FLOOR=false
+FLOOR_TEX_PATH=imgs/checker.png
 
 
 #------------------------------------------------------------------------------#
 # main process                                                                 #
 #------------------------------------------------------------------------------#
 TMPDIR=data/makehuman_videos/`basename $DSTDIR`
+if "$FLOOR"; then
+    OPT="--floor_texture $FLOOR_TEX_PATH"
+fi
 if [ -e $DSTDIR ]; then
     rm -fr $DSTDIR
 fi
@@ -36,12 +49,18 @@ do
     t=$SECONDS
     MODEL=${MODELS[$(($RANDOM % ${#MODELS[@]}))]}
     MOTION=${MOTIONS[$(($RANDOM % ${#MOTIONS[@]}))]}
-    CAM_X=`echo "scale=1; ${X_RANGE[$(($RANDOM % ${#X_RANGE[@]}))]} / 10" | bc -l | awk '{printf "%.1f\n", $0}'`
-    CAM_Y=`echo "scale=1; ${Y_RANGE[$(($RANDOM % ${#Y_RANGE[@]}))]} / 10" | bc -l | awk '{printf "%.1f\n", $0}'`
-    CAM_Z=`echo "scale=1; ${Z_RANGE[$(($RANDOM % ${#Z_RANGE[@]}))]} / 10" | bc -l | awk '{printf "%.1f\n", $0}'`
-    CAM_RX=`echo "scale=1; ${RX_RANGE[$(($RANDOM % ${#RX_RANGE[@]}))]} / 10" | bc -l | awk '{printf "%.1f\n", $0}'`
-    CAM_RY=`echo "scale=1; ${RY_RANGE[$(($RANDOM % ${#RY_RANGE[@]}))]} / 10" | bc -l | awk '{printf "%.1f\n", $0}'`
-    CAM_RZ=`echo "scale=1; ${RZ_RANGE[$(($RANDOM % ${#RZ_RANGE[@]}))]} / 10" | bc -l | awk '{printf "%.1f\n", $0}'`
+    x=${X_RANGE[$(($RANDOM % ${#X_RANGE[@]}))]}
+    y=${Y_RANGE[$(($RANDOM % ${#Y_RANGE[@]}))]}
+    z=${Z_RANGE[$(($RANDOM % ${#Z_RANGE[@]}))]}
+    CAM_X=`echo "scale=1; $x/10" | bc -l | awk '{printf "%.1f\n", $0}'`
+    CAM_Y=`echo "scale=1; $y/10" | bc -l | awk '{printf "%.1f\n", $0}'`
+    CAM_Z=`echo "scale=1; $z/10" | bc -l | awk '{printf "%.1f\n", $0}'`
+    rx=${RX_RANGE[$(($RANDOM % ${#RX_RANGE[@]}))]}
+    ry=${RY_RANGE[$(($RANDOM % ${#RY_RANGE[@]}))]}
+    rz=${RZ_RANGE[$(($RANDOM % ${#RZ_RANGE[@]}))]}
+    CAM_RX=`echo "scale=1; $rx/10" | bc -l | awk '{printf "%.1f\n", $0}'`
+    CAM_RY=`echo "scale=1; $ry/10" | bc -l | awk '{printf "%.1f\n", $0}'`
+    CAM_RZ=`echo "scale=1; $rz/10" | bc -l | awk '{printf "%.1f\n", $0}'`
     SEED=$RANDOM
 
     echo "---------------- parameters ----------------"

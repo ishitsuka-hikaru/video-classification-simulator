@@ -2,8 +2,8 @@
 #------------------------------------------------------------------------------#
 # setting                                                                      #
 #------------------------------------------------------------------------------#
-NUM=1000  # number of motions
-DSTDIR=data/fg_finetune_20220513  # destination of motions
+NUM=10  # number of motions
+DSTDIR=data/fg_outpus  # destination of motions
 MODELS=(f00 f01 f02 f03 f04 f05 f06 f07 f08 m00 m01 m02 m03 m05 m06 m07 m08)
 # MODELS=(f00)
 # MOTIONS=(
@@ -13,10 +13,9 @@ MODELS=(f00 f01 f02 f03 f04 f05 f06 f07 f08 m00 m01 m02 m03 m05 m06 m07 m08)
 #     "cartwheel" "hop turn" "prairie dog" "swim" "monkey" "wave" "pull"
 # )
 MOTIONS=(
-    "run" "jump" "clean" "walk" "dance" "motorcycle"
-    "stand" "march" "drink" "kick" "swing" "throw" "dribble"
-    "duck" "climb" "chicken" "comfort" "wait" "eat" "reach" "stretch"
-    "cartwheel" "swim" "monkey" "wave"
+    "run" "jump" "clean" "walk" "dance" "motorcycle" "stand" "march" "drink"
+    "kick" "swing" "throw" "dribble" "duck" "climb" "chicken" "comfort" "wait"
+    "eat" "reach" "stretch" "cartwheel" "swim" "monkey" "wave"
 )
 # MOTIONS=(walk)
 X_RANGE=($(seq -10 10))    # 0
@@ -93,7 +92,8 @@ do
     ((i++))
 done
 
-rm -fr $TMPDIR
+# rm -fr $TMPDIR
+rm -fr data/makehuman_videos
 
 function displaytime {
     local T=$1

@@ -8,7 +8,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 
 RUN apt-get update && apt-get -y upgrade && apt-get install -y \
-    build-essential git python3-numpy blender bc
+    build-essential git blender bc cython3 \
+    python3-numpy python3-matplotlib python3-opencv python3-tqdm python3-skimage \
+    python3-setuptools
 
 RUN git clone https://github.com/ishitsuka-hikaru/video-classification-simulator.git
 RUN git clone https://github.com/ishitsuka-hikaru/mogen.git
@@ -20,3 +22,7 @@ RUN git clone https://github.com/makehumancommunity/mhx2-makehuman-exchange.git 
 RUN cd /usr/share/blender/scripts/addons && \
     ln -s /makewalk/ makewalk && \
     ln -s /mhx2-makehuman-exchange/import_runtime_mhx2/ import_runtime_mhx2
+RUN git clone https://github.com/ishitsuka-hikaru/data-augmentation-for-coco.git
+RUN git clone https://github.com/cocodataset/cocoapi.git && \
+    cd /cocoapi/PythonAPI && \
+    python3 setup.py build_ext install
